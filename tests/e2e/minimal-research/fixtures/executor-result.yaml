@@ -1,0 +1,41 @@
+status: completed
+
+artifact_refs:
+  - uri: artifacts/research-plan.md
+    artifact_type: research_plan
+    version: "1"
+    content_hash: sha256:fixture-research-plan
+    producer: stub-executor
+    generated_at: "2026-07-23T12:00:00Z"
+    input_refs:
+      - fixture-input-v1
+
+  - uri: artifacts/evidence-report.md
+    artifact_type: evidence_report
+    version: "1"
+    content_hash: sha256:fixture-evidence-report
+    producer: stub-executor
+    generated_at: "2026-07-23T12:00:00Z"
+    input_refs:
+      - fixture-input-v1
+
+  - uri: artifacts/input-manifest.yaml
+    artifact_type: input_manifest
+    version: "1"
+    content_hash: sha256:fixture-input-manifest
+    producer: stub-executor
+    generated_at: "2026-07-23T12:00:00Z"
+    input_refs:
+      - fixture-input-v1
+
+checks_run:
+  - fixture_analysis
+
+findings:
+  - The fixture generated all required artifacts.
+
+limitations:
+  - The result is deterministic and has no domain evidence.
+
+deviations: []
+recommended_next_action: validate

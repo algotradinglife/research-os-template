@@ -1,0 +1,5 @@
+owner: fixture-research-owner
+outcome: inconclusive
+reason: The deterministic fixture verifies workflow behavior but contains no domain evidence.
+decided_at: "2026-07-23T12:02:00Z"
+next_action: preserve_as_test_memory

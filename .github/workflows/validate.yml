@@ -12,5 +12,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate Research OS configuration
-        run: ruby scripts/validate.rb
+      - name: Validate Research OS configuration and controller loop
+        run: make test

@@ -1,0 +1,37 @@
+api_version: research-os/v0.1
+kind: Graph
+
+metadata:
+  id: e2e-minimal-graph
+  project_id: e2e-minimal
+  version: "0.1.0"
+
+spec:
+  nodes:
+    - id: E2E-GOAL-001
+      node_type: goal
+      ref: project.yaml#spec.objectives
+      state: ACTIVE
+    - id: E2E-001
+      node_type: task
+      ref: tasks/E2E-001.yaml
+      state: CREATED
+    - id: E2E-EVIDENCE-001
+      node_type: evidence
+      ref: memory/E2E-MEM-001.yaml
+      state: PLANNED
+    - id: E2E-DECISION-001
+      node_type: decision
+      ref: memory/E2E-MEM-001.yaml
+      state: PLANNED
+
+  edges:
+    - from: E2E-GOAL-001
+      to: E2E-001
+      relation: decomposes_to
+    - from: E2E-001
+      to: E2E-EVIDENCE-001
+      relation: produces
+    - from: E2E-EVIDENCE-001
+      to: E2E-DECISION-001
+      relation: informs

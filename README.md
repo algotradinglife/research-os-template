@@ -109,7 +109,22 @@ See [Pilot guide](docs/pilot-guide.md) for a complete manual-first rollout.
 
 ## Validation
 
-`make validate` checks YAML parsing, state transitions, routing references, graph integrity, and required fields in example instances. CI runs the same command.
+```bash
+make validate  # YAML, state, routing, graph, and controller contracts
+make e2e       # deterministic minimal controller loop
+make test      # both suites
+```
+
+The minimal E2E uses local stub executor, validator, and human-decision fixtures. It verifies:
+
+- high-uncertainty research routing;
+- every persisted state transition;
+- the human decision gate;
+- graph/task consistency;
+- audit generation;
+- memory creation for an inconclusive result.
+
+The E2E runner is a protocol reference, not a production Hermes runtime. It performs no network calls and launches no real agent.
 
 ## Status
 

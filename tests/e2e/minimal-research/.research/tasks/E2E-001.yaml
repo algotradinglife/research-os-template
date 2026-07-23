@@ -1,0 +1,63 @@
+api_version: research-os/v0.1
+kind: Task
+
+metadata:
+  id: E2E-001
+  title: Run the deterministic research fixture
+  project_id: e2e-minimal
+  version: "0.1.0"
+  parent_id: E2E-GOAL-001
+  related_ids: []
+
+spec:
+  type: research
+  intent:
+    objective: Produce a locally verifiable evidence package.
+    question: Can the controller preserve an inconclusive result?
+    hypothesis: The deterministic fixture produces a supported result.
+    expected_value: Verify the complete controller contract without an external runtime.
+    out_of_scope:
+      - Network access
+      - Real agent execution
+
+  context:
+    inputs:
+      - fixture-input-v1
+    assumptions:
+      - All executor and reviewer outputs are deterministic fixtures.
+
+  execution:
+    required_capabilities:
+      - experiment_design
+      - evidence_synthesis
+    uncertainty: high
+    complexity: low
+
+  risk:
+    overall: medium
+    scientific: medium
+    engineering: low
+    data_classification: public
+
+  acceptance:
+    required_artifacts:
+      - research_plan
+      - evidence_report
+      - input_manifest
+    checks:
+      - artifact_completeness
+      - independent_validation
+    human_gates:
+      - final_research_decision
+
+status:
+  current: CREATED
+  attempts: 0
+  routing:
+    executor_mode:
+    profile:
+    runtime:
+    reason:
+  artifacts: []
+  result: {}
+  history: []

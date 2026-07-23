@@ -1,0 +1,58 @@
+api_version: research-os/v0.1
+kind: Project
+
+research_os:
+  repository: https://github.com/algotradinglife/research-os-template
+  ref: main
+  controller: kernel/controller.yaml
+
+metadata:
+  id: e2e-minimal
+  name: Minimal Controller E2E
+  version: "0.1.0"
+  owner: fixture-research-owner
+
+spec:
+  domain:
+    name: deterministic-fixture
+    description: Local fixture used to verify the controller contract.
+    entities:
+      - input
+      - intervention
+      - outcome
+    metrics:
+      - reproducibility
+
+  objectives:
+    mission: Verify one complete research control loop.
+    research_questions:
+      - Can a validated inconclusive result complete and become memory?
+
+  programs:
+    - controller-e2e
+
+  capabilities:
+    required:
+      - experiment_design
+      - evidence_synthesis
+
+  knowledge:
+    sources:
+      - local_fixture
+    memory_path: .research/memory/
+
+  evaluation:
+    success_metrics:
+      - completed_state
+      - persisted_audit
+      - persisted_memory
+    validation_rules:
+      - artifact_completeness
+      - independent_validation
+      - human_decision
+
+  policies:
+    routing: kernel/policies/routing-policy.yaml
+    validation: kernel/policies/validation-policy.yaml
+    memory_promotion: kernel/policies/memory-promotion.yaml
+    data_classification: public

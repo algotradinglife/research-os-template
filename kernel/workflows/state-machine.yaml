@@ -1,0 +1,164 @@
+api_version: research-os/v0.1
+kind: StateMachine
+
+states:
+  CREATED:
+    category: active
+  PLANNING:
+    category: active
+  READY:
+    category: active
+  EXECUTING:
+    category: active
+  VALIDATING:
+    category: active
+  AWAITING_DECISION:
+    category: waiting
+  BLOCKED:
+    category: waiting
+  ESCALATED:
+    category: waiting
+  COMPLETED:
+    category: terminal
+  CANCELLED:
+    category: terminal
+
+transitions:
+  - name: plan_task
+    from: CREATED
+    to: PLANNING
+    conditions:
+      - intent_present
+      - project_policy_loaded
+    actions:
+      - classify_task
+      - calculate_risk
+
+  - name: make_ready
+    from: PLANNING
+    to: READY
+    conditions:
+      - acceptance_contract_present
+      - dependencies_resolved
+      - routing_inputs_present
+    actions:
+      - select_executor_mode
+
+  - name: start_execution
+    from: READY
+    to: EXECUTING
+    conditions:
+      - executor_bound
+      - data_access_allowed
+    actions:
+      - issue_context_package
+
+  - name: submit_for_validation
+    from: EXECUTING
+    to: VALIDATING
+    conditions:
+      - executor_reports_complete
+      - required_artifacts_registered
+    actions:
+      - run_validation_policy
+
+  - name: research_decision_gate
+    from: VALIDATING
+    to: AWAITING_DECISION
+    conditions:
+      - validation_passed
+      - task_type_is_research
+    actions:
+      - request_human_decision
+
+  - name: operational_completion
+    from: VALIDATING
+    to: COMPLETED
+    conditions:
+      - validation_passed
+      - task_type_is_not_research
+    actions:
+      - finalize_delivery
+
+  - name: research_completion
+    from: AWAITING_DECISION
+    to: COMPLETED
+    conditions:
+      - human_decision_recorded
+    actions:
+      - create_memory_candidates
+
+  - name: validation_retry
+    from: VALIDATING
+    to: EXECUTING
+    conditions:
+      - validation_failed
+      - retry_budget_available
+    actions:
+      - attach_validation_findings
+      - increment_attempts
+
+  - name: block_active_work
+    from_any:
+      - PLANNING
+      - READY
+      - EXECUTING
+      - VALIDATING
+    to: BLOCKED
+    conditions:
+      - blocking_dependency_present
+    actions:
+      - record_blocker
+
+  - name: resume_blocked_work
+    from: BLOCKED
+    to: PLANNING
+    conditions:
+      - blocker_resolved
+    actions:
+      - recalculate_plan
+
+  - name: escalate_active_work
+    from_any:
+      - PLANNING
+      - READY
+      - EXECUTING
+      - VALIDATING
+      - BLOCKED
+    to: ESCALATED
+    conditions:
+      - escalation_policy_matched
+    actions:
+      - request_human_gate
+
+  - name: resume_after_escalation
+    from: ESCALATED
+    to: PLANNING
+    conditions:
+      - human_direction_recorded
+    actions:
+      - recalculate_plan
+
+  - name: cancel_task
+    from_any:
+      - CREATED
+      - PLANNING
+      - READY
+      - EXECUTING
+      - VALIDATING
+      - AWAITING_DECISION
+      - BLOCKED
+      - ESCALATED
+    to: CANCELLED
+    conditions:
+      - authorized_cancellation
+    actions:
+      - preserve_partial_artifacts
+      - release_execution_resources
+
+research_outcomes:
+  - supported
+  - partially_supported
+  - refuted
+  - inconclusive
+  - more_evidence_required

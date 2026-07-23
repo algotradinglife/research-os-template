@@ -1,0 +1,68 @@
+api_version: research-os/v0.1
+kind: Task
+
+metadata:
+  id: PA-001
+  title: Define and test a context-conditioned second-entry baseline
+  project_id: pa-research
+  version: "0.1.0"
+  parent_id: PA-GOAL-001
+  related_ids: []
+
+spec:
+  type: research
+  intent:
+    objective: Quantify a deterministic second-entry setup and test its out-of-sample expectancy.
+    question: Does a second-entry setup have positive expectancy when conditioned on trend context?
+    hypothesis: Trend-conditioned second entries outperform an unconditional baseline after costs.
+    expected_value: Decide whether the setup warrants further regime and execution research.
+    out_of_scope:
+      - Live trading
+      - Parameter optimization beyond the preregistered grid
+
+  context:
+    inputs:
+      - market-data-snapshot-v1
+    assumptions:
+      - Signal construction uses only information available at decision time.
+      - Train and evaluation periods are separated temporally.
+
+  execution:
+    required_capabilities:
+      - rule_formalization
+      - backtesting
+      - statistical_validation
+    uncertainty: high
+    complexity: medium
+
+  risk:
+    overall: medium
+    scientific: medium
+    engineering: medium
+    data_classification: internal
+
+  acceptance:
+    required_artifacts:
+      - setup_definition
+      - data_manifest
+      - reproducible_backtest
+      - evidence_report
+    checks:
+      - lookahead_leakage_check
+      - transaction_cost_check
+      - walk_forward_check
+      - reproducibility_check
+    human_gates:
+      - final_research_decision
+
+status:
+  current: CREATED
+  attempts: 0
+  routing:
+    executor_mode: isolated_session
+    profile: researcher
+    runtime: codex
+    reason: High uncertainty requires iterative rule formalization and experiment design.
+  artifacts: []
+  result: {}
+  history: []

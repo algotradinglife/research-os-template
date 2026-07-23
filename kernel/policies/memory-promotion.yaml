@@ -1,0 +1,46 @@
+api_version: research-os/v0.1
+kind: MemoryPromotionPolicy
+
+maturity:
+  raw:
+    description: Executor-generated and unverified.
+  preliminary:
+    description: Structurally checked but not independently reviewed.
+  reviewed:
+    description: Review completed; scope and limitations are explicit.
+  validated:
+    description: Required validation and human decision completed.
+  adopted:
+    description: Approved as reusable organizational knowledge.
+  deprecated:
+    description: Retained for traceability but no longer current.
+
+promotion_rules:
+  - from: raw
+    to: preliminary
+    require:
+      - provenance_complete
+      - source_artifacts_exist
+
+  - from: preliminary
+    to: reviewed
+    require:
+      - validation_complete
+      - limitations_documented
+
+  - from: reviewed
+    to: validated
+    require:
+      - authorized_domain_decision
+
+  - from: validated
+    to: adopted
+    require:
+      - reusable_scope_defined
+      - review_date_defined
+
+defaults:
+  research_result_target: reviewed
+  capability_result_target: reviewed
+  maintenance_result_target: operation_log
+  automatic_adoption_allowed: false

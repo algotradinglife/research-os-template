@@ -1,0 +1,51 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://research-os.dev/schemas/v0.1/graph.schema.yaml
+title: Research Task Graph
+type: object
+required: [api_version, kind, metadata, spec]
+properties:
+  api_version:
+    const: research-os/v0.1
+  kind:
+    const: Graph
+  metadata:
+    type: object
+    required: [id, project_id, version]
+  spec:
+    type: object
+    required: [nodes, edges]
+    properties:
+      nodes:
+        type: array
+        items:
+          type: object
+          required: [id, node_type, ref, state]
+          properties:
+            id:
+              type: string
+            node_type:
+              enum: [goal, question, hypothesis, task, evidence, decision, memory]
+            ref:
+              type: string
+            state:
+              type: string
+      edges:
+        type: array
+        items:
+          type: object
+          required: [from, to, relation]
+          properties:
+            from:
+              type: string
+            to:
+              type: string
+            relation:
+              enum:
+                - decomposes_to
+                - depends_on
+                - tests
+                - produces
+                - supports
+                - contradicts
+                - informs
+                - supersedes

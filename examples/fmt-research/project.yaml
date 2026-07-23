@@ -1,0 +1,62 @@
+api_version: research-os/v0.1
+kind: Project
+
+metadata:
+  id: fmt-research
+  name: FMT Research
+  version: "0.1.0"
+  owner: research-owner
+
+spec:
+  domain:
+    name: microbiome-therapeutics
+    description: Evidence generation for fecal microbiota transplantation research.
+    entities:
+      - donor
+      - recipient
+      - microbiome
+      - intervention
+      - clinical_outcome
+    metrics:
+      - response_rate
+      - viability
+      - safety
+
+  objectives:
+    mission: Improve the reproducibility and decision quality of FMT research.
+    research_questions:
+      - Which donor, recipient, and process variables are associated with outcomes?
+
+  programs:
+    - donor-selection
+    - process-development
+    - clinical-translation
+
+  capabilities:
+    required:
+      - literature_synthesis
+      - bioinformatics
+      - biostatistics
+
+  knowledge:
+    sources:
+      - peer_reviewed_literature
+      - controlled_clinical_data
+      - experiment_records
+    memory_path: memory/
+
+  evaluation:
+    success_metrics:
+      - reproducible_evidence
+      - externally_validated_finding
+    validation_rules:
+      - cohort_definition_frozen
+      - leakage_check
+      - batch_effect_assessment
+      - human_scientific_review
+
+  policies:
+    routing: ../../kernel/policies/routing-policy.yaml
+    validation: ../../kernel/policies/validation-policy.yaml
+    memory_promotion: ../../kernel/policies/memory-promotion.yaml
+    data_classification: restricted

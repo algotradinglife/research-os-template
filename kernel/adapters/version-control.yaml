@@ -1,0 +1,51 @@
+api_version: research-os/v0.1
+kind: VersionControlAdapters
+
+principle:
+  research_graph_is_independent: true
+  version_graph_role: Track file and artifact evolution only.
+
+default_adapter: git
+
+adapters:
+  git:
+    enabled: true
+    artifact_reference_fields:
+      - repository
+      - branch
+      - commit
+      - path
+    isolation:
+      preferred: worktree
+    lifecycle:
+      - create_branch_or_worktree
+      - execute
+      - validate
+      - merge_or_archive
+      - cleanup
+
+  jj:
+    enabled: false
+    optional: true
+    artifact_reference_fields:
+      - repository
+      - change_id
+      - commit_id
+      - path
+    suitable_for:
+      - experiment_forks
+      - parallel_agent_changes
+      - frequent_rebasing
+    constraint:
+      - never_use_change_graph_as_research_graph
+
+artifact_link_contract:
+  required:
+    - adapter
+    - repository
+    - immutable_revision
+    - path
+  optional:
+    - branch
+    - change_id
+    - experiment_label

@@ -1,0 +1,111 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://research-os.dev/schemas/v0.1/task.schema.yaml
+title: Research OS Task
+type: object
+required: [api_version, kind, metadata, spec, status]
+properties:
+  api_version:
+    const: research-os/v0.1
+  kind:
+    const: Task
+  metadata:
+    type: object
+    required: [id, title, project_id, version]
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      project_id:
+        type: string
+      version:
+        type: string
+      parent_id:
+        type: [string, "null"]
+      related_ids:
+        type: array
+        items:
+          type: string
+  spec:
+    type: object
+    required: [type, intent, execution, risk, acceptance]
+    properties:
+      type:
+        enum: [research, capability, maintenance]
+      intent:
+        type: object
+        required: [objective, expected_value]
+        properties:
+          objective:
+            type: string
+          question:
+            type: [string, "null"]
+          hypothesis:
+            type: [string, "null"]
+          expected_value:
+            type: string
+          out_of_scope:
+            type: array
+            items:
+              type: string
+      context:
+        type: object
+      execution:
+        type: object
+        required: [required_capabilities, uncertainty, complexity]
+        properties:
+          required_capabilities:
+            type: array
+            minItems: 1
+          uncertainty:
+            enum: [low, medium, high]
+          complexity:
+            enum: [low, medium, high]
+      risk:
+        type: object
+        required: [overall, data_classification]
+        properties:
+          overall:
+            enum: [low, medium, high, critical]
+          scientific:
+            enum: [low, medium, high]
+          engineering:
+            enum: [low, medium, high]
+          data_classification:
+            enum: [public, internal, confidential, restricted]
+      acceptance:
+        type: object
+        required: [required_artifacts, checks]
+        properties:
+          required_artifacts:
+            type: array
+          checks:
+            type: array
+          human_gates:
+            type: array
+  status:
+    type: object
+    required: [current, attempts, routing, artifacts]
+    properties:
+      current:
+        type: string
+      attempts:
+        type: integer
+        minimum: 0
+      routing:
+        type: object
+        properties:
+          executor_mode:
+            enum: [isolated_session, controller_worker, human_gate]
+          profile:
+            type: string
+          runtime:
+            type: [string, "null"]
+          reason:
+            type: [string, "null"]
+      artifacts:
+        type: array
+      result:
+        type: object
+      history:
+        type: array

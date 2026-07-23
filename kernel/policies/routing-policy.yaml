@@ -1,0 +1,110 @@
+api_version: research-os/v0.1
+kind: RoutingPolicy
+
+priority_order:
+  - safety_and_data
+  - human_authority
+  - risk
+  - task_fit
+  - efficiency
+
+executor_modes:
+  isolated_session:
+    description: Independent, persistent execution context for exploratory or complex work.
+    requires:
+      - session_registry
+      - isolated_change_context
+      - explicit_context_package
+
+  controller_worker:
+    description: Bounded worker profile for known, low-uncertainty work.
+    requires:
+      - explicit_scope
+      - short_lifecycle
+
+  human_gate:
+    description: Authorized human decision or approval.
+
+rules:
+  - id: route_restricted_data
+    priority: 100
+    when:
+      data_classification: restricted
+    action:
+      require_approved_runtime: true
+      disallow_external_runtime: true
+
+  - id: route_human_authority
+    priority: 95
+    when:
+      state: AWAITING_DECISION
+    action:
+      executor_mode: human_gate
+      profile: research_owner
+
+  - id: route_high_risk
+    priority: 90
+    when:
+      risk_in: [high, critical]
+    action:
+      executor_mode: isolated_session
+      require_independent_validation: true
+
+  - id: route_exploration
+    priority: 80
+    when:
+      uncertainty: high
+    action:
+      executor_mode: isolated_session
+      profile: researcher
+
+  - id: route_complex_build
+    priority: 70
+    when:
+      task_type: capability
+      complexity_in: [medium, high]
+    action:
+      executor_mode: isolated_session
+      profile: engineer
+
+  - id: route_bounded_maintenance
+    priority: 60
+    when:
+      task_type: maintenance
+      uncertainty: low
+      complexity: low
+      risk_in: [low, medium]
+    action:
+      executor_mode: controller_worker
+      profile: operator
+
+  - id: route_default
+    priority: 0
+    when:
+      always: true
+    action:
+      executor_mode: isolated_session
+      profile: generalist
+
+escalation:
+  - id: exhausted_retry_budget
+    when:
+      attempts_greater_than: 2
+    action:
+      state: ESCALATED
+      reason: repeated_failure
+
+  - id: scientific_implication_discovered
+    when:
+      scientific_implication: true
+      task_type_is_not: research
+    action:
+      state: ESCALATED
+      reason: reclassification_requires_owner
+
+  - id: scope_expansion
+    when:
+      proposed_scope_exceeds_contract: true
+    action:
+      state: ESCALATED
+      reason: acceptance_contract_change

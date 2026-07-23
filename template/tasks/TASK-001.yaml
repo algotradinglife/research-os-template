@@ -1,0 +1,62 @@
+api_version: research-os/v0.1
+kind: Task
+
+metadata:
+  id: TASK-001
+  title: Replace with the first bounded research task
+  project_id: replace-me
+  version: "0.1.0"
+  parent_id: GOAL-001
+  related_ids: []
+
+spec:
+  type: research
+  intent:
+    objective: Produce evidence for the initial research question.
+    question: Does X improve Y under condition Z?
+    hypothesis: X improves Y under condition Z.
+    expected_value: Decide whether to continue, change, or stop this line of work.
+    out_of_scope:
+      - Production deployment
+
+  context:
+    inputs:
+      - versioned-input-reference
+    assumptions:
+      - State assumptions before execution.
+
+  execution:
+    required_capabilities:
+      - experiment_design
+      - data_analysis
+    uncertainty: high
+    complexity: medium
+
+  risk:
+    overall: medium
+    scientific: medium
+    engineering: low
+    data_classification: internal
+
+  acceptance:
+    required_artifacts:
+      - research_plan
+      - evidence_report
+      - input_manifest
+    checks:
+      - reproducibility_check
+      - limitation_check
+    human_gates:
+      - final_research_decision
+
+status:
+  current: CREATED
+  attempts: 0
+  routing:
+    executor_mode:
+    profile:
+    runtime:
+    reason:
+  artifacts: []
+  result: {}
+  history: []

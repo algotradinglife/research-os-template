@@ -1,0 +1,97 @@
+api_version: research-os/v0.1
+kind: AgentProfiles
+
+executor_modes:
+  - isolated_session
+  - controller_worker
+  - human_gate
+
+profiles:
+  researcher:
+    purpose: Explore uncertain questions and produce bounded evidence.
+    capabilities:
+      - hypothesis_analysis
+      - literature_synthesis
+      - experiment_design
+      - data_exploration
+      - model_comparison
+    must:
+      - state_assumptions
+      - test_alternatives
+      - report_negative_results
+      - document_limitations
+    must_not:
+      - claim_final_truth
+      - change_approved_intent
+
+  engineer:
+    purpose: Build reliable and reproducible research capabilities.
+    capabilities:
+      - architecture
+      - coding
+      - testing
+      - debugging
+      - pipeline_development
+    must:
+      - preserve_acceptance_contract
+      - add_validation
+      - document_change
+    must_not:
+      - remove_controls_without_approval
+
+  operator:
+    purpose: Complete bounded routine maintenance with minimal scope.
+    capabilities:
+      - bug_fix
+      - configuration_update
+      - documentation_update
+      - deterministic_transform
+    must:
+      - follow_existing_patterns
+      - minimize_diff
+      - run_required_checks
+    must_not:
+      - redesign_architecture
+      - expand_scope
+
+  generalist:
+    purpose: Handle tasks that require planning before specialist routing.
+    capabilities:
+      - task_analysis
+      - decomposition
+      - context_packaging
+    must:
+      - identify_missing_constraints
+      - recommend_next_profile
+
+context_contract:
+  required:
+    - task_id
+    - objective
+    - current_state
+    - required_action
+    - constraints
+    - acceptance
+    - allowed_tools
+    - expected_outputs
+
+output_contract:
+  required:
+    - status
+    - artifact_refs
+    - checks_run
+    - findings
+    - limitations
+    - deviations
+    - recommended_next_action
+
+runtime_registry_example:
+  codex:
+    supports_modes: [isolated_session]
+    profiles: [researcher, engineer, generalist]
+  claude:
+    supports_modes: [isolated_session]
+    profiles: [researcher, engineer, generalist]
+  hermes:
+    supports_modes: [controller_worker]
+    profiles: [operator, generalist]

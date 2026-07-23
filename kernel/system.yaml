@@ -1,0 +1,83 @@
+api_version: research-os/v0.1
+kind: System
+
+metadata:
+  name: research-os
+  version: "0.1.0"
+
+principles:
+  - evidence_driven
+  - explicit_state
+  - reproducible_work
+  - least_privilege
+  - human_final_authority
+  - negative_results_are_results
+
+authority:
+  research_owner:
+    responsibilities:
+      - define_goal
+      - approve_hypothesis
+      - define_decision_criteria
+      - make_final_domain_decision
+    exclusive_actions:
+      - change_approved_intent
+      - change_primary_acceptance_criteria
+      - accept_consequential_conclusion
+      - approve_go_no_go
+
+  controller:
+    responsibilities:
+      - observe_graph
+      - evaluate_state
+      - route_work
+      - manage_dependencies
+      - trigger_validation
+      - reconcile_actual_and_desired_state
+    allowed_actions:
+      - create_execution_task
+      - bind_executor
+      - update_operational_state
+      - retry_within_policy
+      - request_human_gate
+    prohibited_actions:
+      - silently_change_goal
+      - silently_change_hypothesis
+      - weaken_acceptance_criteria
+      - declare_domain_truth
+
+  executor:
+    responsibilities:
+      - execute_assigned_scope
+      - produce_artifacts
+      - report_assumptions
+      - report_limitations
+    prohibited_actions:
+      - modify_parent_intent
+      - approve_own_output
+      - promote_output_directly_to_adopted_memory
+
+trust:
+  executor_output: unverified
+  state_transition_requires_evidence: true
+  self_review_sufficient_for:
+    - formatting_only
+    - deterministic_low_risk_transform
+
+audit:
+  record:
+    - task_created
+    - route_selected
+    - executor_bound
+    - artifact_registered
+    - validation_completed
+    - state_changed
+    - human_decision
+    - memory_promoted
+
+defaults:
+  version_control: git
+  graph_model: directed_acyclic
+  max_automatic_attempts: 2
+  data_classification: internal
+  validation_policy: standard

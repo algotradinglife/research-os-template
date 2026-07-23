@@ -1,0 +1,37 @@
+api_version: research-os/v0.1
+kind: Graph
+
+metadata:
+  id: pa-second-entry-pilot
+  project_id: pa-research
+  version: "0.1.0"
+
+spec:
+  nodes:
+    - id: PA-GOAL-001
+      node_type: goal
+      ref: project.yaml#spec.objectives
+      state: ACTIVE
+    - id: PA-001
+      node_type: task
+      ref: tasks/PA-001.yaml
+      state: CREATED
+    - id: PA-EVIDENCE-001
+      node_type: evidence
+      ref: memory/PA-MEM-001.yaml
+      state: PLANNED
+    - id: PA-DECISION-001
+      node_type: decision
+      ref: memory/PA-MEM-001.yaml
+      state: PLANNED
+
+  edges:
+    - from: PA-GOAL-001
+      to: PA-001
+      relation: decomposes_to
+    - from: PA-001
+      to: PA-EVIDENCE-001
+      relation: produces
+    - from: PA-EVIDENCE-001
+      to: PA-DECISION-001
+      relation: informs

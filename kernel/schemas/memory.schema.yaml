@@ -1,0 +1,36 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://research-os.dev/schemas/v0.1/memory.schema.yaml
+title: Research OS Memory Record
+type: object
+required: [api_version, kind, metadata, spec]
+properties:
+  api_version:
+    const: research-os/v0.1
+  kind:
+    const: MemoryRecord
+  metadata:
+    type: object
+    required: [id, project_id, version, created_at]
+  spec:
+    type: object
+    required: [type, maturity, statement, provenance, confidence, limitations]
+    properties:
+      type:
+        enum: [hypothesis, evidence, decision, method, failure, principle, asset]
+      maturity:
+        enum: [raw, preliminary, reviewed, validated, adopted, deprecated]
+      statement:
+        type: string
+      provenance:
+        type: object
+        required: [task_ids, artifact_refs]
+      confidence:
+        enum: [low, medium, high]
+      scope:
+        type: object
+      limitations:
+        type: array
+      supersedes:
+        type: array
+      review_due:
+        type: [string, "null"]

@@ -1,0 +1,78 @@
+api_version: research-os/v0.1
+kind: ValidationPolicy
+
+principle: Reviewer is a gate capability, not necessarily a permanent role.
+
+levels:
+  low:
+    required:
+      - executor_self_check
+      - deterministic_check
+
+  medium:
+    required:
+      - automated_tests
+      - diff_or_artifact_review
+      - reproducibility_check
+
+  high:
+    required:
+      - automated_tests
+      - independent_review
+      - reproducibility_check
+      - domain_owner_review
+
+methods:
+  engineering:
+    available:
+      - unit_tests
+      - integration_tests
+      - ci
+      - codex_review_cli
+      - independent_agent_review
+
+  data:
+    available:
+      - schema_check
+      - leakage_check
+      - provenance_check
+      - reproducibility_check
+
+  research:
+    available:
+      - evidence_completeness
+      - falsification_check
+      - alternative_explanation_check
+      - human_scientific_review
+
+minimum_artifact_metadata:
+  - uri
+  - artifact_type
+  - version
+  - content_hash
+  - producer
+  - generated_at
+  - input_refs
+
+rules:
+  - id: executor_cannot_be_only_reviewer
+    applies_when:
+      risk_in: [medium, high, critical]
+    require:
+      - independent_validation_method
+
+  - id: research_requires_decision_gate
+    applies_when:
+      task_type: research
+    require:
+      - evidence_package
+      - limitations
+      - human_scientific_decision
+
+  - id: restricted_data_requires_provenance
+    applies_when:
+      data_classification: restricted
+    require:
+      - data_manifest
+      - access_audit
+      - output_sensitivity_scan

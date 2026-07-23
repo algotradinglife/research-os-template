@@ -1,0 +1,23 @@
+api_version: research-os/v0.1
+kind: Graph
+
+metadata:
+  id: replace-me-pilot
+  project_id: replace-me
+  version: "0.1.0"
+
+spec:
+  nodes:
+    - id: GOAL-001
+      node_type: goal
+      ref: project.yaml#spec.objectives
+      state: ACTIVE
+    - id: TASK-001
+      node_type: task
+      ref: tasks/TASK-001.yaml
+      state: CREATED
+
+  edges:
+    - from: GOAL-001
+      to: TASK-001
+      relation: decomposes_to

@@ -1,0 +1,59 @@
+api_version: research-os/v0.1
+kind: Project
+
+metadata:
+  id: pa-research
+  name: Price Action Quant Research
+  version: "0.1.0"
+  owner: research-owner
+
+spec:
+  domain:
+    name: quantitative-trading
+    description: Quantification and validation of discretionary price-action concepts.
+    entities:
+      - bar
+      - setup
+      - market_regime
+      - trade
+    metrics:
+      - expectancy
+      - max_drawdown
+      - calibration
+
+  objectives:
+    mission: Convert price-action observations into reproducible and falsifiable strategies.
+    research_questions:
+      - Does context-conditioned second-entry behavior have positive out-of-sample expectancy?
+
+  programs:
+    - pattern-quantification
+    - regime-modeling
+
+  capabilities:
+    required:
+      - time_series_analysis
+      - backtesting
+      - statistical_validation
+
+  knowledge:
+    sources:
+      - market_data
+      - research_notes
+      - trading_logs
+    memory_path: memory/
+
+  evaluation:
+    success_metrics:
+      - out_of_sample_expectancy
+      - drawdown_stability
+    validation_rules:
+      - temporal_split
+      - walk_forward_validation
+      - transaction_costs_included
+
+  policies:
+    routing: ../../kernel/policies/routing-policy.yaml
+    validation: ../../kernel/policies/validation-policy.yaml
+    memory_promotion: ../../kernel/policies/memory-promotion.yaml
+    data_classification: internal

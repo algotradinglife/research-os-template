@@ -1,0 +1,51 @@
+api_version: research-os/v0.1
+kind: Project
+
+metadata:
+  id: replace-me
+  name: Replace Me Research
+  version: "0.1.0"
+  owner: research-owner
+
+spec:
+  domain:
+    name: replace-me
+    description: Describe the evidence domain.
+    entities:
+      - observation
+      - intervention
+      - outcome
+    metrics:
+      - primary_metric
+
+  objectives:
+    mission: State the long-term purpose.
+    research_questions:
+      - State the first answerable question.
+
+  programs:
+    - pilot
+
+  capabilities:
+    required:
+      - research_analysis
+      - engineering
+
+  knowledge:
+    sources:
+      - controlled_documents
+      - versioned_datasets
+    memory_path: memory/
+
+  evaluation:
+    success_metrics:
+      - primary_metric
+    validation_rules:
+      - reproducible
+      - limitations_documented
+
+  policies:
+    routing: ../kernel/policies/routing-policy.yaml
+    validation: ../kernel/policies/validation-policy.yaml
+    memory_promotion: ../kernel/policies/memory-promotion.yaml
+    data_classification: internal

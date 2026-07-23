@@ -1,0 +1,8 @@
+.DS_Store
+*.swp
+*.tmp
+.env
+.venv/
+vendor/
+artifacts/private/
+artifacts/raw-data/

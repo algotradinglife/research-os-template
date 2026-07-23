@@ -75,9 +75,15 @@ documents.each do |file, doc|
 
   case doc["kind"]
   when "Project"
-    require_keys(errors, file, doc, %w[metadata spec], "project")
+    require_keys(errors, file, doc, %w[research_os metadata spec], "project")
+    require_keys(errors, file, doc["research_os"], %w[repository ref controller], "research_os")
     require_keys(errors, file, doc["metadata"], %w[id name version], "metadata")
     require_keys(errors, file, doc["spec"], %w[domain objectives evaluation policies], "spec")
+
+    controller_path = doc.dig("research_os", "controller")
+    if controller_path && !ROOT.join(controller_path).exist?
+      errors << "#{file}: research_os.controller references missing file #{controller_path}"
+    end
   when "Task"
     require_keys(errors, file, doc, %w[metadata spec status], "task")
     require_keys(errors, file, doc["metadata"], %w[id title project_id version], "metadata")
@@ -162,6 +168,36 @@ documents.each do |file, doc|
     maturity = doc.dig("spec", "maturity")
     allowed = %w[raw preliminary reviewed validated adopted deprecated]
     errors << "#{file}: invalid memory maturity #{maturity}" unless allowed.include?(maturity)
+  when "ControllerBootstrap"
+    require_keys(
+      errors,
+      file,
+      doc,
+      %w[metadata identity boot project_layout startup_report control_loop executor_modes branch_worktree context_package executor_result authority validation persistence recovery],
+      "controller"
+    )
+
+    ordered_reads = doc.dig("boot", "ordered_reads") || []
+    errors << "#{file}: boot.ordered_reads must not be empty" if ordered_reads.empty?
+    ordered_reads.each do |entry|
+      next unless entry["required"]
+      next if entry["resolution"]
+
+      path = entry["path"]
+      errors << "#{file}: required boot file #{path} is missing" unless ROOT.join(path).exist?
+    end
+
+    declared_modes = doc.fetch("executor_modes", {}).keys
+    missing_modes = executor_modes - declared_modes
+    missing_modes.each do |mode|
+      errors << "#{file}: controller is missing executor mode #{mode}"
+    end
+
+    loop_stages = doc.dig("control_loop", "stages") || []
+    required_stages = %w[observe evaluate route execute validate transition persist recalculate]
+    (required_stages - loop_stages).each do |stage|
+      errors << "#{file}: control loop is missing stage #{stage}"
+    end
   end
 end
 

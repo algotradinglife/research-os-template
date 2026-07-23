@@ -1,0 +1,256 @@
+api_version: research-os/v0.1
+kind: ControllerBootstrap
+
+metadata:
+  name: hermes-research-controller
+  version: "0.1.0"
+
+identity:
+  role: control_plane
+  objective: Reconcile desired research state with persisted execution state.
+  decision_question: What is the next valid action?
+
+boot:
+  mode: read_only
+  ordered_reads:
+    - path: HERMES.md
+      purpose: human_readable_operating_contract
+      required: true
+    - path: kernel/system.yaml
+      purpose: authority_and_governance
+      required: true
+    - path: project
+      purpose: domain_instance
+      required: true
+      resolution:
+        - .research/project.yaml
+        - operator_supplied_path
+    - path: graph
+      purpose: desired_and_actual_research_state
+      required: true
+      resolution:
+        - .research/graph.yaml
+        - project_relative_graph
+    - path: kernel/workflows/state-machine.yaml
+      purpose: allowed_transitions
+      required: true
+    - path: kernel/policies/routing-policy.yaml
+      purpose: executor_selection
+      required: true
+    - path: kernel/policies/validation-policy.yaml
+      purpose: transition_gates
+      required: true
+    - path: kernel/policies/memory-promotion.yaml
+      purpose: knowledge_promotion
+      required: true
+    - path: kernel/profiles/agent-profiles.yaml
+      purpose: capability_and_behavior_contracts
+      required: true
+    - path: kernel/adapters/version-control.yaml
+      purpose: immutable_artifact_references
+      required: true
+
+  mutation_allowed_after:
+    - required_files_loaded
+    - project_resolved
+    - graph_resolved
+    - active_tasks_loaded
+    - repository_state_observed
+    - authority_boundaries_loaded
+
+project_layout:
+  preferred_root: .research
+  project: .research/project.yaml
+  graph: .research/graph.yaml
+  tasks: .research/tasks
+  memory: .research/memory
+  artifacts: .research/artifacts
+  audit: .research/audit
+  runtime_registry: .research/runtime
+
+startup_report:
+  required:
+    - project
+    - graph
+    - repository
+    - branch
+    - worktree
+    - state_summary
+    - actionable_nodes
+    - blocked_nodes
+    - selected_next_action
+    - required_gate
+    - warnings
+
+control_loop:
+  stages:
+    - observe
+    - evaluate
+    - route
+    - execute
+    - validate
+    - transition
+    - persist
+    - recalculate
+
+  observe:
+    sources:
+      - project_config
+      - graph
+      - active_tasks
+      - version_control
+      - artifact_manifests
+      - validation_records
+      - audit_history
+      - runtime_registry
+
+  evaluate:
+    order:
+      - authority
+      - data_policy
+      - risk
+      - dependencies
+      - transition_conditions
+      - retry_budget
+      - wip_limit
+
+  route:
+    output:
+      - node_id
+      - action
+      - executor_mode
+      - profile
+      - runtime_constraints
+      - reason
+      - required_gate
+
+  transition:
+    maximum_per_reconciliation: 1
+    require:
+      - allowed_transition
+      - transition_conditions_satisfied
+      - evidence_persisted
+
+executor_modes:
+  isolated_session:
+    requires:
+      - explicit_context_package
+      - branch
+      - worktree
+      - primary_session
+      - immutable_base_revision
+
+  controller_worker:
+    requires:
+      - bounded_scope
+      - low_uncertainty
+      - reversible_change
+      - short_lifecycle
+
+  human_gate:
+    requires:
+      - decision_request
+      - authority_owner
+      - decision_record
+
+branch_worktree:
+  use_existing_domain_repository: true
+  branch_pattern: research/{task_id}-{slug}
+  one_primary_executor_per_task: true
+  default_active_worktree_limit: 1
+
+  registration_fields:
+    - task_id
+    - executor
+    - session_id
+    - branch
+    - worktree
+    - base_revision
+    - started_at
+    - last_heartbeat
+    - lease
+    - status
+
+  lifecycle:
+    - verify_ready
+    - create_branch
+    - create_worktree
+    - register_runtime
+    - execute
+    - validate
+    - persist_decision_and_memory
+    - merge_or_archive
+    - remove_worktree
+
+context_package:
+  required:
+    - task_id
+    - objective
+    - current_state
+    - required_action
+    - inputs
+    - constraints
+    - acceptance
+    - allowed_tools
+    - expected_outputs
+    - repository
+    - branch
+    - worktree
+
+executor_result:
+  required:
+    - status
+    - artifact_refs
+    - checks_run
+    - findings
+    - limitations
+    - deviations
+    - recommended_next_action
+
+authority:
+  controller_may:
+    - create_execution_task
+    - update_operational_state
+    - bind_executor
+    - trigger_validation
+    - retry_within_policy
+    - request_human_gate
+    - create_memory_candidate
+
+  controller_must_escalate:
+    - approved_intent_change
+    - primary_acceptance_change
+    - consequential_research_decision
+    - policy_change
+    - restricted_data_route_change
+    - retry_budget_exhausted
+
+validation:
+  reviewer_is_gate_capability: true
+  allowed_implementations:
+    - automated_tests
+    - ci
+    - codex_review_cli
+    - independent_session
+    - human_review
+  independent_gate_required_for:
+    - medium_risk
+    - high_risk
+    - critical_risk
+
+persistence:
+  chat_is_source_of_truth: false
+  required_records:
+    - state_change
+    - route_selection
+    - artifact_registration
+    - validation_result
+    - human_decision
+    - memory_promotion
+
+recovery:
+  on_state_mismatch:
+    - stop_mutation
+    - report_expected_and_actual
+    - select_reversible_reconciliation
+    - escalate_if_authority_required

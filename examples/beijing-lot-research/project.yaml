@@ -1,6 +1,11 @@
 api_version: research-os/v0.1
 kind: Project
 
+research_os:
+  repository: https://github.com/algotradinglife/research-os-template
+  ref: main
+  controller: kernel/controller.yaml
+
 metadata:
   id: beijing-lot-research
   name: Beijing Lot Strategy Research

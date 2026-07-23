@@ -11,6 +11,20 @@ Research OS separates four concerns:
 
 The template is designed for biomedical research, quantitative trading, sports probability research, and other evidence-driven domains.
 
+## Hermes entry point
+
+Hermes or another controller should start with [`HERMES.md`](HERMES.md), then load the machine-readable bootstrap contract in [`kernel/controller.yaml`](kernel/controller.yaml).
+
+The entry point defines:
+
+- the exact read order;
+- the required first status report;
+- the observe–evaluate–route–execute–validate loop;
+- authority and escalation boundaries;
+- the one-task/one-branch/one-worktree protocol;
+- executor input and output contracts;
+- recovery without hidden chat history.
+
 ## Operating model
 
 ```mermaid
@@ -33,6 +47,7 @@ The research graph is the source of truth for **why and what happens next**. Git
 
 ```text
 kernel/
+  controller.yaml                Machine-readable controller bootstrap
   system.yaml                    Governance and authority boundaries
   schemas/                       Project, graph, task, and memory contracts
   workflows/state-machine.yaml   Shared lifecycle and transitions
@@ -64,6 +79,21 @@ To start a project, copy `template/`, then:
 4. Let the controller choose an executor mode from policy.
 5. Require artifacts and validation before state transitions.
 6. Promote only accepted outputs into memory.
+
+For an existing domain repository, place project state under `.research/` instead of creating another repository:
+
+```text
+existing-domain-repo/
+  .research/
+    project.yaml
+    graph.yaml
+    tasks/
+    memory/
+```
+
+Use one `research/<task-id>-<slug>` branch and one worktree for each isolated experiment.
+
+The copied `project.yaml` points Hermes to this repository's controller contract. Replace `ref: main` with a release tag or commit before using the configuration in a stable production workflow.
 
 See [Pilot guide](docs/pilot-guide.md) for a complete manual-first rollout.
 

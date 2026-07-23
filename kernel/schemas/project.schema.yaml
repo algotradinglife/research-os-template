@@ -2,12 +2,22 @@ $schema: https://json-schema.org/draft/2020-12/schema
 $id: https://research-os.dev/schemas/v0.1/project.schema.yaml
 title: Research OS Project
 type: object
-required: [api_version, kind, metadata, spec]
+required: [api_version, kind, research_os, metadata, spec]
 properties:
   api_version:
     const: research-os/v0.1
   kind:
     const: Project
+  research_os:
+    type: object
+    required: [repository, ref, controller]
+    properties:
+      repository:
+        type: string
+      ref:
+        type: string
+      controller:
+        type: string
   metadata:
     type: object
     required: [id, name, version]
